@@ -22,10 +22,15 @@ def spending_by_category(transactions: pd.DataFrame, category: str, date: Option
             & (transactions["Дата операции"] > start_date)
             & (transactions["Дата операции"] <= end_date)
         ]
-        expenses_of_category = transactions[["Дата операции", "Категория", "Сумма платежа"]].sort_values(["Дата операции"])
-        expenses_of_category = expenses_of_category.to_dict()
+        expenses_of_category = transactions[["Дата операции", "Категория", "Сумма платежа"]].sort_values(
+            ["Дата операции"]
+        )
+        expenses_of_category["Дата операции"] = expenses_of_category["Дата операции"].apply(
+            lambda x: x.strftime("%Y-%m-%d %H:%M:%S")
+        )  # strftime("%Y-%m-%d %H:%M:%S")
+        expenses_of_category = expenses_of_category.to_dict(orient="records")
         return expenses_of_category
-    except ValueError:
-        print(ValueError)
+    except ValueError as ve:
+        print(ve)
     except Exception as e:
         print(f"Произошла ошибка: {e}")

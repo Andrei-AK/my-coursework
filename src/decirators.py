@@ -1,25 +1,29 @@
 import json
 import logging
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 
 load_dotenv()
-PATH_TO_JSON = os.getenv("PATH_TO_JSON")
-
+BASE_DIR = Path(__file__).parent.parent
+PATH_TO_JSON = BASE_DIR / os.getenv("PATH_TO_JSON")
 
 def write_logs(func):
     def wrapper(*args, **kwargs):
-        file_handler = logging.FileHandler(os.path.join("../logs", func.__name__ + ".log"), "w", "UTF-8")
-        logging.basicConfig(level="DEBUG", encoding="UTF-8", handlers=[file_handler])
-        file_formatter = logging.Formatter("%(asctime)s %(levelname)s: %(message)s")
-        file_handler.setFormatter(file_formatter)
-        logger = logging.getLogger()
-        logger.addHandler(file_handler)
-        logger.debug(f"Функция {func.__name__} начала работу")
-        result = func(*args, **kwargs)
-        logger.debug(f"Функция {func.__name__} завершила работу")
-        return result
+        try:
+            file_handler = logging.FileHandler(os.path.join(BASE_DIR/"logs/", func.__name__ + ".log"), "w", "UTF-8")
+            logging.basicConfig(level="DEBUG", encoding="UTF-8", handlers=[file_handler])
+            file_formatter = logging.Formatter("%(asctime)s %(levelname)s: %(message)s")
+            file_handler.setFormatter(file_formatter)
+            logger = logging.getLogger()
+            logger.addHandler(file_handler)
+            logger.debug(f"Функция {func.__name__} начала работу")
+            result = func(*args, **kwargs)
+            logger.debug(f"Функция {func.__name__} завершила работу")
+            return result
+        except TypeError:
+            raise TypeError
 
     wrapper.__name__ = func.__name__
     return wrapper

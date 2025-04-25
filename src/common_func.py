@@ -16,5 +16,4 @@ def read_by_pandas(file_path, datatime_to_timestamp: bool = True):
 @write_logs
 def write_json(path_file, json_data):
     with open(path_file, "w", encoding="UTF-8") as f:
-        result = json.dump(json_data, f, indent=4, ensure_ascii=False)
-        return result
+        json.dump(json_data, f, indent=4, ensure_ascii=False)
